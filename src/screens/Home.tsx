@@ -1,21 +1,48 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { VStack, HStack, FlatList, Text, Heading, useToast } from "native-base";
+import {
+  VStack,
+  HStack,
+  FlatList,
+  Text,
+  Heading,
+  useToast,
+  Box,
+  Pressable,
+  Divider,
+} from "native-base";
+import { useForm, Controller } from "react-hook-form";
 
-import { ExerciseCard } from "../components/ExerciseCard";
+import { ProductCard } from "../components/ProductCard";
 import { Group } from "../components/Group";
 import { HomeHeader } from "../components/HomeHeader";
 import { AppNavigatorRoutesProps } from "../routes/app.routes";
 import { api } from "../services/api";
 import { AppError } from "../utils/AppError";
-import { ExercisesDTO } from "../dtos/ExerciseDTO";
+import { ProductsDTO } from "../dtos/ExerciseDTO";
 import { Loading } from "../components/Loading";
+import {
+  ArrowRight,
+  Faders,
+  MagnifyingGlass,
+  Tag,
+} from "phosphor-react-native";
+import { Input } from "../components/Input";
+import { FilterModal } from "../components/FilterModal";
+import { Modalize } from "react-native-modalize";
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
   const [group, setGroup] = useState<string[]>();
-  const [exercise, setExercise] = useState<ExercisesDTO[]>([]);
+  const [exercise, setExercise] = useState<ProductsDTO[]>([]);
   const [groupSelected, setGroupSelected] = useState("costas");
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
@@ -41,7 +68,7 @@ export function Home() {
     }
   }
 
-  async function fetchExercisesByCategorie() {
+  async function fetchProductByFilter() {
     try {
       setIsLoading(true);
 
@@ -65,66 +92,114 @@ export function Home() {
     }
   }
 
+  function handleSearch() {}
+
+  function handleOpenFilterModal(event: any) {
+    event.nativeEvent.persist();
+    setOpenModal(true);
+  }
+
   useEffect(() => {
     loadGroups();
-    fetchExercisesByCategorie();
+    fetchProductByFilter();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      fetchExercisesByCategorie();
+      fetchProductByFilter();
     }, [groupSelected])
   );
 
   return (
-    <VStack>
+    <VStack flex={1} bg="gray.200" px={6}>
       <HomeHeader />
-      <FlatList
-        data={group}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <Group
-            name={item}
-            isActive={
-              groupSelected.toLocaleUpperCase() === item.toLocaleUpperCase()
+
+      <Text mt={3} mb={3}>
+        Seus produtos anunciados para venda
+      </Text>
+      <HStack
+        bg="blue.300"
+        px={4}
+        py={3}
+        alignItems="center"
+        rounded={6}
+        mb={8}
+      >
+        <Tag />
+        <VStack ml={4} mr={16}>
+          <Heading>4</Heading>
+          <Text>anúncios ativos</Text>
+        </VStack>
+
+        <HStack>
+          <Text color="blue.700" mr={2}>
+            Meus anúncios
+          </Text>
+          <ArrowRight color="#364D9D" size={16} />
+        </HStack>
+      </HStack>
+
+      <Text mb={3}>Compre produtos variados</Text>
+      <Controller
+        control={control}
+        name="confirmPassword"
+        render={({ field: { onChange, value } }) => (
+          <Input
+            placeholder="Buscar anúncio"
+            onChangeText={onChange}
+            value={value}
+            InputRightElement={
+              <>
+                <Pressable onPress={() => handleSearch()}>
+                  <MagnifyingGlass weight="bold" size={20} color="#3E3A40" />
+                </Pressable>
+                <Divider orientation="vertical" mx={4} h={4} color="gray.400" />
+                <Pressable onPress={(e) => handleOpenFilterModal(e)} mr={4}>
+                  <Faders weight="bold" size={20} color="#3E3A40" />
+                </Pressable>
+              </>
             }
-            onPress={() => setGroupSelected(item)}
           />
         )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        _contentContainerStyle={{ px: 8 }}
-        my={10}
-        maxH={10}
-        minH={10}
       />
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <VStack px={8}>
-          <HStack justifyContent="space-between" mb={5}>
-            <Heading color="gray.200" fontSize="md" fontFamily="heading">
-              Exercicios
-            </Heading>
-            <Text color="gray.200" fontSize="sm">
-              {exercise.length}
-            </Text>
-          </HStack>
 
-          <FlatList
-            data={exercise}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ExerciseCard
-                data={item}
-                onPress={() => navigate("exercise", { exerciseId: item.id })}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            _contentContainerStyle={{ paddingBottom: 10 }}
-          />
-        </VStack>
-      )}
+      <FilterModal open={openModal} />
+
+      {/* {isLoading ? (
+        <Loading />
+      ) : ( */}
+      <VStack>
+        <Box
+          display="flex"
+          flex={1}
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="space-between"
+          mt={4}
+        >
+          <ProductCard onPress={() => navigate("AnnouncementDetails")} />
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+        </Box>
+
+        {/* <FlatList
+          data={exercise}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProductCard
+              data={item}
+              onPress={() => navigate("exercise", { exerciseId: item.id })}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          _contentContainerStyle={{ paddingBottom: 10 }}
+        /> */}
+      </VStack>
+      {/* )} */}
     </VStack>
   );
 }

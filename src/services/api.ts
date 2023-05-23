@@ -1,7 +1,7 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance } from "axios";
 
-import { AppError } from '../utils/AppError';
-import { getToken, saveToken } from '../storage/storageConfig';
+import { AppError } from "../utils/AppError";
+import { getToken, saveToken } from "../storage/storageConfig";
 
 type SignOut = () => void;
 
@@ -15,7 +15,7 @@ type PromiseType = {
 };
 
 export const api = axios.create({
-  baseURL: 'http://192.168.15.46:3333',
+  baseURL: "http://localhost:3333",
 }) as APIInstanceProps;
 
 let failedQueue: PromiseType[] = [];
@@ -27,8 +27,8 @@ api.registerInterceptTokenManager = (signOut) => {
     async (requestError) => {
       if (requestError?.response?.status === 401) {
         if (
-          requestError.response?.data?.message === 'token.expired' ||
-          requestError.response?.data?.message === 'token.invalid'
+          requestError.response?.data?.message === "token.expired" ||
+          requestError.response?.data?.message === "token.invalid"
         ) {
           const { refreshToken } = await getToken();
 
@@ -59,7 +59,7 @@ api.registerInterceptTokenManager = (signOut) => {
 
           return new Promise(async (resolve, reject) => {
             try {
-              const { data } = await api.post('/sessions/refresh_token', {
+              const { data } = await api.post("/sessions/refresh_token", {
                 refreshToken,
               });
 
@@ -76,7 +76,7 @@ api.registerInterceptTokenManager = (signOut) => {
                 Authorization: `Bearer ${data.token}`,
               };
               api.defaults.headers.common[
-                'Authorization'
+                "Authorization"
               ] = `Bearer ${data.token}`;
 
               failedQueue.forEach((request) => {

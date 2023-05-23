@@ -1,4 +1,4 @@
-export type ExercisesDTO = {
+export type ProductsDTO = {
   id: string;
   demo: string;
   group: string;

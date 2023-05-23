@@ -1,25 +1,25 @@
-import { StatusBar } from 'react-native';
-import { NativeBaseProvider } from 'native-base';
-import { THEME } from './src/theme';
+import { StatusBar } from "react-native";
+import { NativeBaseProvider } from "native-base";
+import { THEME } from "./src/theme";
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from '@expo-google-fonts/roboto';
-import { Loading } from './src/components/Loading';
-import { Routes } from './src/routes';
-import { AuthContextProvider } from './src/contexts/AuthContext';
+  Karla_700Bold,
+  Karla_400Regular,
+} from "@expo-google-fonts/karla";
+import { Loading } from "./src/components/Loading";
+import { Routes } from "./src/routes";
+import { AuthContextProvider } from "./src/contexts/AuthContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Karla_700Bold,
+    Karla_400Regular,
   });
   return (
     <NativeBaseProvider theme={THEME}>
       <StatusBar
-        barStyle='light-content'
-        backgroundColor='transparent'
+        barStyle="dark-content"
+        backgroundColor="transparent"
         translucent
       />
       <AuthContextProvider>

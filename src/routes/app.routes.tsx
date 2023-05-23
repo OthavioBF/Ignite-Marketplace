@@ -1,31 +1,45 @@
-import { useTheme } from 'native-base';
+import { useTheme } from "native-base";
 import {
   createBottomTabNavigator,
   BottomTabNavigationProp,
-} from '@react-navigation/bottom-tabs';
-import { Home } from '../screens/Home';
-import { History } from '../screens/History';
-import { Profile } from '../screens/Profile';
+} from "@react-navigation/bottom-tabs";
 
-import HomeSvg from '../assets/home.svg';
-import HistorySvg from '../assets/history.svg';
-import ProfileSvg from '../assets/profile.svg';
-import { Platform } from 'react-native';
-import { Exercise } from '../screens/Exercise';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
-type AppRoutes = {
-  home: undefined;
-  history: undefined;
-  profile: undefined;
-  exercise: { exerciseId: string };
+import { House, Tag, SignOut } from "phosphor-react-native";
+import { Home } from "../screens/Home";
+import { MyAnnouncements } from "../screens/MyAnnouncements";
+import { CreateAnnouncement } from "../screens/CreateAnnouncement";
+import { PublishAnnouncement } from "../screens/PublishAnnouncement";
+import { MyAnnouncementDetails } from "../screens/MyAnnouncementDetails";
+
+import { Platform } from "react-native";
+import { EmptyComponent } from "../components/EmptyComponent";
+import { AnnouncementDetails } from "../screens/AnnouncementDetails";
+
+type AppTabRoutes = {
+  Home: undefined;
+  MyAnnoucements: undefined;
+  SignOut: undefined;
 };
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
+type AppStackRoutes = {
+  TabRoutes: undefined;
+  AnnouncementDetails: undefined;
+  CreateAnnouncement: undefined;
+  PublishAnnouncement: undefined;
+  MyAnnouncementDetails: undefined;
+};
 
-const { Screen, Navigator } = createBottomTabNavigator<AppRoutes>();
+export type AppNavigatorTabRoutesProps = BottomTabNavigationProp<AppTabRoutes>;
+export type AppNavigatorStackRoutesProps =
+  NativeStackNavigationProp<AppStackRoutes>;
 
-export function AppRoutes() {
+function HomeTabs() {
   const { sizes, colors } = useTheme();
+
+  const { Screen, Navigator } = createBottomTabNavigator<AppTabRoutes>();
 
   const iconSize = sizes[7];
 
@@ -34,62 +48,61 @@ export function AppRoutes() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.yellow[500],
-        tabBarInactiveTintColor: colors.gray[200],
+        tabBarActiveTintColor: colors.gray[600],
+        tabBarInactiveTintColor: colors.gray[400],
         tabBarStyle: {
-          backgroundColor: colors.gray[600],
+          backgroundColor: colors.gray[100],
           borderTopWidth: 0,
-          height: Platform.OS === 'android' ? 'auto' : 96,
+          height: Platform.OS === "android" ? "auto" : 96,
           paddingBottom: sizes[10],
-          paddingTop: sizes[6],
+          paddingTop: sizes[10],
         },
       }}
     >
       <Screen
-        name='home'
+        name="Home"
         component={Home}
         options={{
-          tabBarIcon: ({ color }) => (
-            <HomeSvg
-              fill={color}
-              width={iconSize}
-              height={iconSize}
-            />
-          ),
+          tabBarIcon: ({ color }) => <House size={24} color={color} />,
         }}
       />
       <Screen
-        name='history'
-        component={History}
+        name="MyAnnoucements"
+        component={MyAnnouncements}
         options={{
-          tabBarIcon: ({ color }) => (
-            <HistorySvg
-              fill={color}
-              width={iconSize}
-              height={iconSize}
-            />
-          ),
-        }}
-      />
-      <Screen
-        name='profile'
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <ProfileSvg
-              fill={color}
-              width={iconSize}
-              height={iconSize}
-            />
-          ),
+          tabBarIcon: ({ color }) => <Tag size={24} color={color} />,
         }}
       />
 
       <Screen
-        name='exercise'
-        component={Exercise}
-        options={{ tabBarButton: () => null }}
+        name="SignOut"
+        component={EmptyComponent}
+        options={{
+          tabBarIcon: () => <SignOut size={24} color="#EE7979" />,
+        }}
       />
+    </Navigator>
+  );
+}
+
+export function AppRoutes() {
+  const { Screen, Navigator } = createNativeStackNavigator<AppStackRoutes>();
+
+  return (
+    <Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Screen name="TabRoutes" component={HomeTabs} />
+
+      <Screen name="AnnouncementDetails" component={AnnouncementDetails} />
+
+      <Screen name="CreateAnnouncement" component={CreateAnnouncement} />
+
+      <Screen name="PublishAnnouncement" component={PublishAnnouncement} />
+
+      <Screen name="MyAnnouncementDetails" component={MyAnnouncementDetails} />
     </Navigator>
   );
 }
