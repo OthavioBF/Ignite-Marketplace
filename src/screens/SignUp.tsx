@@ -80,7 +80,7 @@ export function SignUp() {
     try {
       setIsLoading(true);
       const response = await api.post(
-        "/users",
+        "/Users",
         {
           name,
           email,

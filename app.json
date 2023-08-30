@@ -27,7 +27,9 @@
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -36,7 +38,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.othavio.igniteMarketplace"
     },
     "web": {
@@ -44,7 +48,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3c3d19f2-bf58-4e99-b9f5-3fccd040dc1e"
+        "projectId": "d23a0620-6d01-4292-9bd9-eb238c9899ac"
       }
     }
   }
